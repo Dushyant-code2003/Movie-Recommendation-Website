@@ -1,14 +1,11 @@
 "use strict";
 
 function getBackendOrigin() {
-  const { protocol, hostname, port, origin } = window.location;
-
-  if ((protocol === "http:" || protocol === "https:") && port === "5000") {
+  const { origin } = window.location;
+  if (origin && origin.startsWith("http")) {
     return origin;
   }
-
-  const host = hostname && hostname !== "" ? hostname : "127.0.0.1";
-  return `http://${host}:5000`;
+  return "http://127.0.0.1:5000";
 }
 
 const LOCAL_ORIGIN = getBackendOrigin();
