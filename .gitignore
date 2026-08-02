@@ -1,0 +1,16 @@
+# Python & virtual environment
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.env
+
+# Large generated cache/model artifacts
+backend/poster_cache/
+backend/movies.pkl
+backend/similarity.pkl
+backend/rag_*.pkl
+
+# OS files
+.DS_Store
+Thumbs.db
