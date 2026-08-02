@@ -125,7 +125,13 @@ class RecommendationEngine:
 
         vectorizer = TfidfVectorizer(stop_words="english", max_features=8000, ngram_range=(1, 2))
         vectors = vectorizer.fit_transform(model_movies["tags"])
-        similarity = cosine_similarity(vectors)
+        sim_matrix = cosine_similarity(vectors)
+
+        similarity = {}
+        for idx in range(len(sim_matrix)):
+            distances = sim_matrix[idx]
+            ranked = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:51]
+            similarity[idx] = [(int(i), float(s)) for i, s in ranked]
 
         pickle.dump(model_movies.reset_index(drop=True), open(MOVIES_PKL, "wb"))
         pickle.dump(similarity, open(SIMILARITY_PKL, "wb"))
@@ -194,8 +200,11 @@ class RecommendationEngine:
             return []
 
         source_id = self._movie_id_for_index(idx)
-        distances = self.similarity[idx]
-        ranked = sorted(list(enumerate(distances)), reverse=True, key=lambda item: item[1])[1 : limit + 1]
+        if isinstance(self.similarity, dict):
+            ranked = self.similarity.get(idx, [])[:limit]
+        else:
+            distances = self.similarity[idx]
+            ranked = sorted(list(enumerate(distances)), reverse=True, key=lambda item: item[1])[1 : limit + 1]
 
         results = []
         for movie_idx, score in ranked:
